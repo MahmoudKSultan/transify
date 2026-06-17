@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #fafafa;
+    --color-surface: #ffffff;
+    --color-border: #e5e7eb;
+    --color-text: #111827;
+    --color-text-secondary: #6b7280;
+    --color-select-bg: #ffffff;
+    --color-select-hover: #f3f4f6;
+  }
+
+  :root.dark {
+    --color-bg: #0f172a;
+    --color-surface: #1e293b;
+    --color-border: #334155;
+    --color-text: #f1f5f9;
+    --color-text-secondary: #94a3b8;
+    --color-select-bg: #1e293b;
+    --color-select-hover: #334155;
+  }
+
+  :root.high-contrast {
+    --color-bg: #000000;
+    --color-surface: #1a1a1a;
+    --color-border: #ffffff;
+    --color-text: #ffffff;
+    --color-text-secondary: #e0e0e0;
+    --color-select-bg: #1a1a1a;
+    --color-select-hover: #333333;
+  }
+
+  :root.high-contrast.dark {
+    --color-bg: #000000;
+    --color-surface: #1a1a1a;
+    --color-border: #ffffff;
+    --color-text: #ffffff;
+    --color-text-secondary: #e0e0e0;
+    --color-select-bg: #1a1a1a;
+    --color-select-hover: #333333;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light):not(.dark) {
+      --color-bg: #0f172a;
+      --color-surface: #1e293b;
+      --color-border: #334155;
+      --color-text: #f1f5f9;
+      --color-text-secondary: #94a3b8;
+      --color-select-bg: #1e293b;
+      --color-select-hover: #334155;
+    }
+  }
+
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: 14px;
+    line-height: 1.5;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .high-contrast *:focus-visible {
+    outline: 3px solid #ffff00;
+    outline-offset: 2px;
+  }
+
+  /* Select styling */
+  select {
+    appearance: none;
+    background-color: var(--color-select-bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 28px !important;
+  }
+
+  select:hover {
+    background-color: var(--color-select-hover);
+  }
+
+  select option {
+    background-color: var(--color-select-bg);
+    color: var(--color-text);
+    padding: 8px 12px;
+  }
+
+  select option:hover,
+  select option:checked {
+    background-color: var(--color-select-hover);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

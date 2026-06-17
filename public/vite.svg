@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#4F46E5"/>
+  <g transform="translate(3, 4)">
+    <path d="M4 6 Q4 4 6 4 L16 4 Q18 4 18 6 L18 12 Q18 14 16 14 L12 14 L9 17 L10 14 L8 14 Q6 14 6 12 Z"
+          fill="white" opacity="0.95"/>
+    <path d="M8 9 Q8 7 10 7 L20 7 Q22 7 22 9 L22 15 Q22 17 20 17 L16 17 L13 20 L14 17 L12 17 Q10 17 10 15 Z"
+          fill="#c7d2fe"/>
+    <text x="10" y="11.5" font-family="system-ui" font-size="6" font-weight="700" fill="#4338CA"
+          text-anchor="middle" dominant-baseline="central">A</text>
+    <text x="14" y="11.5" font-family="system-ui" font-size="5" font-weight="500" fill="#6D28D9"
+          text-anchor="middle" dominant-baseline="central">文</text>
+  </g>
+</svg>

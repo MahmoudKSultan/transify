@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="bubble1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0e7ff"/>
+    </linearGradient>
+    <linearGradient id="bubble2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c7d2fe"/>
+      <stop offset="100%" stop-color="#ede9fe"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+
+  <!-- Left speech bubble (source language) -->
+  <path d="M240 400 Q240 320 320 320 L580 320 Q660 320 660 400 L660 510 Q660 590 580 590 L440 590 L340 670 L360 590 L320 590 Q240 590 240 510 Z"
+        fill="url(#bubble1)" opacity="0.95"/>
+
+  <!-- Right speech bubble (target language) -->
+  <path d="M364 480 Q364 400 444 400 L704 400 Q784 400 784 480 L784 590 Q784 670 704 670 L564 670 L464 750 L484 670 L444 670 Q364 670 364 590 Z"
+        fill="url(#bubble2)" opacity="0.95"/>
+
+  <!-- Inner "A" character in left bubble (source) -->
+  <text x="450" y="510" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+        font-size="160" font-weight="700" fill="#4338CA" text-anchor="middle" dominant-baseline="central">
+    A
+  </text>
+
+  <!-- Inner "文" character in right bubble (target) -->
+  <text x="580" y="510" font-family="system-ui, -apple-system, 'Noto Sans SC', sans-serif"
+        font-size="140" font-weight="500" fill="#6D28D9" text-anchor="middle" dominant-baseline="central">
+    文
+  </text>
+
+  <!-- Small translate arrow between bubbles -->
+  <g transform="translate(492, 540)">
+    <path d="M0 0 L24 0 L16 -10 M0 0 L24 0 L16 10"
+          fill="none" stroke="#A78BFA" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
