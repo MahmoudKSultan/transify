@@ -22,11 +22,11 @@ export const useScreenshotStore = create<ScreenshotTranslationStore>((set) => ({
       const { getCurrentWindow } = await import("@tauri-apps/api/window");
       const win = getCurrentWindow();
 
-      // Minimize so user can see other apps
-      await win.minimize();
+      // Hide so user can see other apps for region selection
+      await win.hide();
 
       const dataUrl = await capture.captureRegion();
-      await win.unminimize();
+      await win.show();
       await win.setFocus();
 
       set({ capturedImage: dataUrl, isCapturing: false, isOcrRunning: true });
@@ -46,7 +46,8 @@ export const useScreenshotStore = create<ScreenshotTranslationStore>((set) => ({
     } catch (err) {
       try {
         const { getCurrentWindow } = await import("@tauri-apps/api/window");
-        await getCurrentWindow().unminimize();
+        await getCurrentWindow().show();
+        await getCurrentWindow().setFocus();
       } catch {}
 
       console.error("[Transify] Capture error:", err);
