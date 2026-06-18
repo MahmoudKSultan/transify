@@ -61,25 +61,29 @@ fn capture_with_tool(tool: &str, output_path: &str) -> Result<(), String> {
 
 #[tauri::command]
 pub fn capture_screen_region() -> Result<String, String> {
-    // gnome-screenshot first (Wayland-native), scrot second (X11), import last
     let tools = ["gnome-screenshot", "scrot", "import"];
 
     let tool = tools.iter().find(|t| tool_available(t)).ok_or_else(|| {
-        "No screen capture tool found.\nTry: sudo apt install gnome-screenshot\n\nThen restart Transify.".to_string()
+        let msg = "No screen capture tool found.\nInstall gnome-screenshot or scrot.".to_string();
+        eprintln!("[Transify-Rust] {}", msg);
+        msg
     })?;
 
     eprintln!("[Transify-Rust] Capturing with: {}", tool);
 
     let tmp_path = format!("/tmp/transify-capture-{}.png", std::process::id());
 
-    capture_with_tool(tool, &tmp_path)?;
+    if let Err(e) = capture_with_tool(tool, &tmp_path) {
+        eprintln!("[Transify-Rust] Capture error: {}", e);
+        return Err(e);
+    };
 
-    let mut file =
-        std::fs::File::open(&tmp_path).map_err(|e| format!("Failed to open capture: {}", e))?;
+    let mut file = std::fs::File::open(&tmp_path)
+        .map_err(|e| format!("Failed to open capture file: {}", e))?;
 
     let mut buf = Vec::new();
     file.read_to_end(&mut buf)
-        .map_err(|e| format!("Failed to read capture: {}", e))?;
+        .map_err(|e| format!("Failed to read capture file: {}", e))?;
 
     let _ = std::fs::remove_file(&tmp_path);
 

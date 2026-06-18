@@ -49,8 +49,8 @@ export const useScreenshotStore = create<ScreenshotTranslationStore>((set) => ({
         await getCurrentWindow().unminimize();
       } catch {}
 
-      const message =
-        err instanceof Error ? err.message : "Capture failed.";
+      console.error("[Transify] Capture error:", err);
+      const message = typeof err === "string" ? err : err instanceof Error ? err.message : "Capture failed.";
       set({ isCapturing: false, isOcrRunning: false, error: message });
     }
   },
