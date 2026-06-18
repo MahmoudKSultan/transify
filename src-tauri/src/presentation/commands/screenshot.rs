@@ -3,7 +3,6 @@ use std::io::Read;
 use std::process::Command;
 
 fn tool_available(tool: &str) -> bool {
-    // Try direct execution first
     if Command::new(tool)
         .arg("--version")
         .stdout(std::process::Stdio::null())
@@ -15,7 +14,6 @@ fn tool_available(tool: &str) -> bool {
         return true;
     }
 
-    // Fallback: check common paths
     for prefix in &["/usr/bin/", "/usr/local/bin/", "/bin/"] {
         let full = format!("{}{}", prefix, tool);
         if std::path::Path::new(&full).exists() {
@@ -27,21 +25,21 @@ fn tool_available(tool: &str) -> bool {
 
 fn capture_with_tool(tool: &str, output_path: &str) -> Result<(), String> {
     match tool {
-        "scrot" => {
-            let status = Command::new("scrot")
-                .args(["-s", output_path])
-                .status()
-                .map_err(|e| format!("Failed to run scrot: {}", e))?;
-            if !status.success() {
-                return Err("Capture cancelled or failed.".into());
-            }
-            Ok(())
-        }
         "gnome-screenshot" => {
             let status = Command::new("gnome-screenshot")
                 .args(["-a", "-f", output_path])
                 .status()
                 .map_err(|e| format!("Failed to run gnome-screenshot: {}", e))?;
+            if !status.success() {
+                return Err("Capture cancelled or failed.".into());
+            }
+            Ok(())
+        }
+        "scrot" => {
+            let status = Command::new("scrot")
+                .args(["-s", output_path])
+                .status()
+                .map_err(|e| format!("Failed to run scrot: {}", e))?;
             if !status.success() {
                 return Err("Capture cancelled or failed.".into());
             }
@@ -63,25 +61,14 @@ fn capture_with_tool(tool: &str, output_path: &str) -> Result<(), String> {
 
 #[tauri::command]
 pub fn capture_screen_region() -> Result<String, String> {
-    let tools = ["scrot", "gnome-screenshot", "import"];
-
-    // Debug: log path and available tools
-    eprintln!(
-        "[Transify-Rust] PATH={:?}",
-        std::env::var("PATH").unwrap_or_default()
-    );
-
-    for t in &tools {
-        let found = tool_available(t);
-        eprintln!("[Transify-Rust]   {} available: {}", t, found);
-    }
+    // gnome-screenshot first (Wayland-native), scrot second (X11), import last
+    let tools = ["gnome-screenshot", "scrot", "import"];
 
     let tool = tools.iter().find(|t| tool_available(t)).ok_or_else(|| {
-        eprintln!("[Transify-Rust] No capture tool found");
-        "No screen capture tool found.\n\nTry:\n  sudo apt install scrot\n\nThen restart Transify.".to_string()
+        "No screen capture tool found.\nTry: sudo apt install gnome-screenshot\n\nThen restart Transify.".to_string()
     })?;
 
-    eprintln!("[Transify-Rust] Capturing screen with: {}", tool);
+    eprintln!("[Transify-Rust] Capturing with: {}", tool);
 
     let tmp_path = format!("/tmp/transify-capture-{}.png", std::process::id());
 
@@ -97,10 +84,7 @@ pub fn capture_screen_region() -> Result<String, String> {
     let _ = std::fs::remove_file(&tmp_path);
 
     let encoded = base64::engine::general_purpose::STANDARD.encode(&buf);
-    eprintln!(
-        "[Transify-Rust] Capture done: {} bytes encoded",
-        encoded.len()
-    );
+    eprintln!("[Transify-Rust] Capture done: {} bytes", encoded.len());
 
     Ok(encoded)
 }

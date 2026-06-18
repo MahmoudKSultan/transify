@@ -19,7 +19,17 @@ export const useScreenshotStore = create<ScreenshotTranslationStore>((set) => ({
     set({ isCapturing: true, error: null });
 
     try {
+      // Hide the window so user can see other apps
+      const { getCurrentWindow } = await import("@tauri-apps/api/window");
+      const win = getCurrentWindow();
+      await win.minimize();
+
       const dataUrl = await capture.captureRegion();
+
+      // Restore window
+      await win.unminimize();
+      await win.setFocus();
+
       set({ capturedImage: dataUrl, isCapturing: false, isOcrRunning: true });
 
       const result = await ocr.extractText(dataUrl);
@@ -35,6 +45,12 @@ export const useScreenshotStore = create<ScreenshotTranslationStore>((set) => ({
       translator.setInputText(result.text);
       setTimeout(() => translator.translate(), 50);
     } catch (err) {
+      // Restore window even on error
+      try {
+        const { getCurrentWindow } = await import("@tauri-apps/api/window");
+        await getCurrentWindow().unminimize();
+      } catch {}
+
       const message =
         err instanceof Error ? err.message : "Capture failed.";
       set({ isCapturing: false, isOcrRunning: false, error: message });
