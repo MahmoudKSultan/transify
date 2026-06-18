@@ -1,141 +1,277 @@
-# Transify
+<div align="center">
+  <img src="src-tauri/icons/icon.png" width="128" height="128" alt="Transify icon">
+  <h1>Transify</h1>
+  <p><strong>Cross-platform desktop translator</strong> — built with Tauri, React, and Rust</p>
 
-A modern desktop translation tool built with **Tauri v2**, **React**, and **Rust**. Translate text instantly with a global shortcut — no API key required.
+  <p>
+    <a href="#features">Features</a> •
+    <a href="#screenshots">Screenshots</a> •
+    <a href="#installation">Installation</a> •
+    <a href="#architecture">Architecture</a> •
+    <a href="#roadmap">Roadmap</a>
+  </p>
 
-<p align="center">
-  <img src="src-tauri/icons/icon.png" width="128" height="128" alt="Transify icon: two speech bubbles with A and 文 characters">
-</p>
+  <p>
+    <img src="https://img.shields.io/github/v/release/MahmoudKSultan/transify?style=flat-square&label=version" alt="Version">
+    <img src="https://img.shields.io/github/license/MahmoudKSultan/transify?style=flat-square" alt="License">
+    <img src="https://img.shields.io/badge/tauri-v2-blueviolet?style=flat-square&logo=tauri" alt="Tauri v2">
+    <img src="https://img.shields.io/badge/react-18-blue?style=flat-square&logo=react" alt="React 18">
+    <img src="https://img.shields.io/badge/typescript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
+    <img src="https://img.shields.io/badge/rust-1.70+-orange?style=flat-square&logo=rust" alt="Rust">
+    <img src="https://img.shields.io/badge/platform-linux%20|%20windows%20|%20macos-lightgrey?style=flat-square" alt="Platform">
+  </p>
+</div>
+
+A fast, accessible translation app that lives in your system tray. Select text in any app, press **Ctrl+T**, and get an instant translation — no API key required.
+
+> **Select → Ctrl+T → Translate** — works on Linux, Windows, and macOS.
 
 ## Features
 
-- **Instant translation** — paste or type text, translation appears immediately (300ms debounce)
-- **Select → Ctrl+T → Translate** — select text in any app, press `Ctrl+T`, get the translation. No manual copy needed.
-- **Global shortcut** — `Ctrl+T` works even when Transify is not focused (on X11/XWayland; on Wayland via `rdev` + `input` group)
-- **Language auto-detection** — Google Translate detects the source language automatically
-- **Language swap** — one-click swap between source/target languages
-- **Translation history** — all translations are saved locally
-- **Theming** — light, dark, and system theme — plus high contrast mode for accessibility
-- **Auto-copy result** — optional toggle to copy translated text to clipboard automatically
-- **Fully keyboard navigable** — all features accessible without a mouse
-- **Screen reader friendly** — ARIA labels, focus states, and WCAG AA compliant
-- **Editable shortcuts** — customize keyboard shortcuts from Settings (Ctrl+T, Ctrl+S, etc.)
+- **Select & Translate** — select text in any application, press `Ctrl+T`, Transify copies the text and translates it
+- **Global Shortcut** — `Ctrl+T` works system-wide; on Wayland it uses direct input listening (`rdev`)
+- **Screenshot OCR Translation** *(coming soon)* — capture a screen region, extract text, and translate it
+- **Instant Translation** — type or paste text, translation appears after 300ms debounce
+- **Auto Language Detection** — Google Translate detects source language automatically
+- **Editable Shortcuts** — customize every shortcut from Settings (Ctrl+T, Ctrl+S, Ctrl+Shift+C, etc.)
+- **Theming** — Light, Dark, and System themes, plus High Contrast Mode (WCAG AA)
+- **Translation History** — all translations saved locally with timestamps
+- **Auto-copy Result** — optional toggle to copy translated text to clipboard
+- **Fully Keyboard Navigable** — every feature works without a mouse
+- **Screen Reader Friendly** — ARIA labels, focus states, proper landmarks
 
-## How It Works
+## Screenshots
 
-1. **Select text** in any application (browser, terminal, editor)
-2. **Press Ctrl+T** — Transify detects the shortcut, copies the selected text, reads it from clipboard, and translates it
-3. **Result appears** instantly in the Transify window
+> *Screenshots coming soon. Transify has a clean, minimal interface with input panel, language selector, output panel, and action toolbar.*
 
-No API key needed. The app uses the free Google Translate endpoint (`translate.googleapis.com`).
+```
+┌──────────────────────────────────┐
+│  Transify                        │
+├──────────────────────────────────┤
+│  Source Text                     │
+│  ┌────────────────────────────┐  │
+│  │  Hello world               │  │
+│  │                            │  │
+│  └────────────────────────────┘  │
+├─────────────┬────────────────────┤
+│  Auto ▼     │  Arabic ▼    ⟲    │
+├─────────────┴────────────────────┤
+│  Translated Text                 │
+│  ┌────────────────────────────┐  │
+│  │  مرحباً بالعالم            │  │
+│  └────────────────────────────┘  │
+├──────────────────────────────────┤
+│  📷 Capture  [Translate]  Copy  │
+└──────────────────────────────────┘
+```
 
 ## Installation
 
-### Option 1: AppImage (portable, recommended)
+### Download the latest release
+
+| Platform | Format | Download |
+|----------|--------|----------|
+| Linux | AppImage | [Transify-0.1.0-x86_64.AppImage](https://github.com/MahmoudKSultan/transify/releases) |
+| Linux | .deb (Debian/Ubuntu) | [Transify_0.1.0_amd64.deb](https://github.com/MahmoudKSultan/transify/releases) |
+| Linux | .rpm (Fedora/RHEL) | [Transify-0.1.0-1.x86_64.rpm](https://github.com/MahmoudKSultan/transify/releases) |
+
+### Linux (AppImage — portable)
 
 ```bash
-chmod +x Transify_0.1.0_amd64.AppImage
-./Transify_0.1.0_amd64.AppImage
+chmod +x Transify-0.1.0-x86_64.AppImage
+./Transify-0.1.0-x86_64.AppImage
 ```
 
-### Option 2: Debian / Ubuntu
+### Debian / Ubuntu
 
 ```bash
 sudo dpkg -i Transify_0.1.0_amd64.deb
 transify
 ```
 
-### Option 3: Fedora / RHEL
+### Fedora / RHEL
 
 ```bash
 sudo rpm -i Transify-0.1.0-1.x86_64.rpm
 transify
 ```
 
-## Building from Source
+### Build from source
 
-### Prerequisites
-
-- [Rust](https://rustup.rs/) (1.70+)
-- [Node.js](https://nodejs.org/) (18+)
-- [Tauri v2 system dependencies](https://v2.tauri.app/start/prerequisites/)
-
-### Build
+**Prerequisites:** [Rust](https://rustup.rs/), [Node.js](https://nodejs.org/) 18+, [Tauri system deps](https://v2.tauri.app/start/prerequisites/)
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/MahmoudKSultan/transify.git
 cd transify
 npm install
 npx tauri build
 ```
 
-Build artifacts will be in `src-tauri/target/release/bundle/`.
+Artifacts are in `src-tauri/target/release/bundle/`.
 
-## Development
+## Usage
 
-```bash
-npm install
-npm run dev        # Vite frontend on http://localhost:5180
-npx tauri dev      # Full Tauri app with hot reload
-```
+### Quick Start
 
-The dev server runs on **port 5180** (configured to avoid conflicts).
+1. Launch Transify
+2. Type or paste text — translation appears automatically
+3. Use **Ctrl+T** from any app to translate clipboard content
+4. Use **Ctrl+S** to swap languages
+5. Use **Ctrl+Shift+C** to clear input
 
-## Keyboard Shortcuts
+### Global Shortcut (Ctrl+T)
 
-| Action | Default | Customizable |
-|--------|---------|-------------|
-| **Translate clipboard** | `Ctrl+T` | Yes |
-| **Swap languages** | `Ctrl+S` | Yes |
-| **Clear input** | `Ctrl+Shift+C` | Yes |
-| **Focus input** | `Ctrl+L` | Yes |
-| **Translate (Enter)** | `Enter` | No |
+The global shortcut lets you translate text from any application:
 
-All shortcuts can be remapped in **Settings → Shortcuts**.
+1. **Select text** in your browser, editor, or terminal
+2. **Press Ctrl+T** — Transify copies the text and opens to show the translation
+3. **Done** — the translated text appears in the output panel
+
+> **Note on Wayland:** If you're on GNOME Wayland, run `sudo usermod -a -G input $USER && reboot` for the global shortcut to work system-wide.
+
+### Screenshot OCR Translation
+
+> *This feature is in development. Track progress on the `feature/screenshot-translation` branch.*
 
 ## Architecture
 
 ```
-UI Layer (React + Zustand)
-    ↓
-Tauri IPC (invoke commands)
-    ↓
-Application Layer (Rust use-cases)
-    ↓
-Infrastructure (Google Translate API)
+┌─────────────────────────────────────────────────────────┐
+│                     UI Layer (React)                     │
+│  ┌──────────┐  ┌───────┐  ┌─────────┐  ┌──────────┐   │
+│  │ Translator│  │History│  │Settings │  │ Screenshot│   │
+│  │  Panel    │  │ Panel │  │  Panel  │  │  OCR      │   │
+│  └─────┬────┘  └───┬───┘  └────┬────┘  └─────┬────┘   │
+│        └───────────┴───────────┴──────────────┘        │
+│                        │                                │
+│              ┌─────────▼──────────┐                      │
+│              │   Zustand Store    │                      │
+│              └─────────┬──────────┘                      │
+│                        │                                │
+│              ┌─────────▼──────────┐                      │
+│              │  Tauri IPC (invoke)│                      │
+│              └─────────┬──────────┘                      │
+├────────────────────────┼────────────────────────────────┤
+│              ┌─────────▼──────────┐                      │
+│              │    Rust Backend    │                      │
+│              │  (Tauri Commands)  │                      │
+│              └─────────┬──────────┘                      │
+├────────────────────────┼────────────────────────────────┤
+│  ┌──────────┐  ┌───────▼────┐  ┌──────────────────┐    │
+│  │Google    │  │   OCR      │  │   Screen Capture  │    │
+│  │Translate │  │  Provider  │  │   (future)        │    │
+│  │  API     │  │ (Tesseract)│  │                   │    │
+│  └──────────┘  └────────────┘  └──────────────────┘    │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ### Project Structure
 
 ```
-src/                    # React frontend
-├── features/translator # Translator domain
-├── widgets/            # Panel components
-├── shared/             # UI primitives, utils, constants
-└── app/                # Root app component
-
-src-tauri/              # Rust backend
-├── src/domain/         # Domain models & entities
-├── src/application/    # Use cases & interfaces
-├── src/infrastructure/ # Google Translate, clipboard
-└── src/presentation/   # Tauri commands, key listener
+transify/
+├── src/                          # React frontend
+│   ├── app/                      # Root App component
+│   ├── features/
+│   │   ├── translator/           # Core translation feature
+│   │   │   ├── components/       # Translator, InputPanel, OutputPanel, etc.
+│   │   │   ├── hooks/            # useKeyboardShortcuts, useGlobalShortcut, etc.
+│   │   │   ├── store/            # Zustand state
+│   │   │   ├── services/         # Translation API calls
+│   │   │   └── types/            # TS types & constants
+│   │   └── screenshot-translation/  # (coming soon)
+│   ├── widgets/                  # Panel components
+│   ├── shared/                   # UI primitives, utils, constants
+│   └── main.tsx
+├── src-tauri/                    # Rust backend
+│   ├── src/
+│   │   ├── domain/               # Domain models & entities
+│   │   ├── application/          # Use cases & interfaces
+│   │   ├── infrastructure/       # Google Translate, clipboard
+│   │   └── presentation/         # Tauri commands, key listener
+│   ├── icons/                    # App icons (all platforms)
+│   └── tauri.conf.json
+├── app-icon.svg                  # Source icon
+└── test-highlight-to-translate.sh # QA test suite (37 tests)
 ```
 
-## Global Shortcut on Wayland
+### Tech Stack
 
-Tauri's global shortcut plugin does not work on GNOME Wayland. Transify uses the `rdev` crate as a fallback to listen for `Ctrl+T` at the OS input level. If you're on Wayland, you may need:
+| Layer | Technology |
+|-------|-----------|
+| **Desktop Shell** | [Tauri v2](https://v2.tauri.app/) |
+| **Frontend** | React 18, TypeScript, TailwindCSS, Zustand |
+| **Backend** | Rust, arboard (clipboard), rdev (key listener) |
+| **Translation** | Google Translate (free, no API key) |
+| **OCR** | Tesseract (planned) |
+| **UI Components** | Radix UI, Lucide icons |
+
+## Keyboard Shortcuts
+
+| Action | Default | Customizable |
+|--------|---------|:------------:|
+| Translate clipboard | `Ctrl+T` | ✓ |
+| Swap languages | `Ctrl+S` | ✓ |
+| Clear input | `Ctrl+Shift+C` | ✓ |
+| Focus input | `Ctrl+L` | ✓ |
+| Enter to translate | `Enter` | — |
+| Capture & translate (OCR) | `Ctrl+Shift+O` | ✓ *(planned)* |
+
+## Roadmap
+
+- [x] Text translation with Google Translate
+- [x] Global shortcut (Ctrl+T) for instant translate
+- [x] Accessibility-first UI (WCAG AA)
+- [x] Customizable keyboard shortcuts
+- [x] Translation history
+- [x] Light/dark/high-contrast themes
+- [ ] **Screenshot OCR translation** — capture region → OCR → translate
+- [ ] Multi-language OCR (Arabic, French, German, etc.)
+- [ ] Floating mini-translator overlay
+- [ ] OCR history with image previews
+- [ ] Text-to-speech (pronunciation)
+- [ ] Offline translation mode
+- [ ] AI summarization & tone rewriting
+- [ ] Plugin system (DeepL, OpenAI, LibreTranslate)
+
+## Development
 
 ```bash
-sudo usermod -a -G input $USER
-# then reboot
+# Frontend only (hot reload)
+npm run dev            # → http://localhost:5180
+
+# Full Tauri app
+npx tauri dev          # Hot reload frontend + Rust
+
+# Build production
+npx tauri build
+
+# Run QA tests
+bash test-highlight-to-translate.sh
 ```
 
-## Tech Stack
+The dev server runs on port **5180** to avoid conflicts.
 
-- **Desktop shell:** [Tauri v2](https://v2.tauri.app/)
-- **Frontend:** React 18, TypeScript, TailwindCSS, Zustand
-- **Backend:** Rust, arboard, rdev
-- **Translation:** Google Translate (free, no API key)
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -am 'Add my feature'`
+4. Push: `git push origin feature/my-feature`
+5. Open a Pull Request
+
+Please run `bash test-highlight-to-translate.sh` before submitting.
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
+
+---
+
+<div align="center">
+  <p>Built with ❤️ using Tauri, React, and Rust</p>
+  <p>
+    <a href="https://github.com/MahmoudKSultan/transify/issues">Report Bug</a> •
+    <a href="https://github.com/MahmoudKSultan/transify/discussions">Discussion</a> •
+    <a href="https://github.com/MahmoudKSultan/transify/releases">Releases</a>
+  </p>
+</div>
