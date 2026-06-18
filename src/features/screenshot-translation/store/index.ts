@@ -19,14 +19,13 @@ export const useScreenshotStore = create<ScreenshotTranslationStore>((set) => ({
     set({ isCapturing: true, error: null });
 
     try {
-      // Hide the window so user can see other apps
       const { getCurrentWindow } = await import("@tauri-apps/api/window");
       const win = getCurrentWindow();
+
+      // Minimize so user can see other apps
       await win.minimize();
 
       const dataUrl = await capture.captureRegion();
-
-      // Restore window
       await win.unminimize();
       await win.setFocus();
 
@@ -45,7 +44,6 @@ export const useScreenshotStore = create<ScreenshotTranslationStore>((set) => ({
       translator.setInputText(result.text);
       setTimeout(() => translator.translate(), 50);
     } catch (err) {
-      // Restore window even on error
       try {
         const { getCurrentWindow } = await import("@tauri-apps/api/window");
         await getCurrentWindow().unminimize();
@@ -57,8 +55,12 @@ export const useScreenshotStore = create<ScreenshotTranslationStore>((set) => ({
     }
   },
 
-  cancelCapture: () => {
+  cancelCapture: async () => {
     set({ isCapturing: false, error: null });
+    try {
+      const { invoke } = await import("@tauri-apps/api/core");
+      await invoke("cancel_capture");
+    } catch {}
   },
 
   clear: () => {

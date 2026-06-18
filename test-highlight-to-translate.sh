@@ -259,6 +259,22 @@ check "base64 crate in Cargo.toml" \
     "grep \"base64\" src-tauri/Cargo.toml" \
     "base64"
 
+check "CaptureOverlay component exists" \
+    "ls src/features/screenshot-translation/components/CaptureOverlay.tsx 2>&1" \
+    "CaptureOverlay.tsx"
+
+check "cancel_capture Rust command exists" \
+    "grep 'fn cancel_capture' src-tauri/src/presentation/commands/screenshot.rs" \
+    "fn cancel_capture"
+
+check "cancel_capture registered in lib.rs" \
+    "grep cancel_capture src-tauri/src/lib.rs" \
+    "cancel_capture"
+
+check "CaptureOverlay in App.tsx" \
+    "grep CaptureOverlay src/app/App.tsx" \
+    "CaptureOverlay"
+
 echo ""
 echo "--- Summary ---"
 echo "  PASS: $PASS"

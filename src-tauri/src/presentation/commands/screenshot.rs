@@ -88,3 +88,12 @@ pub fn capture_screen_region() -> Result<String, String> {
 
     Ok(encoded)
 }
+
+#[tauri::command]
+pub fn cancel_capture() -> Result<(), String> {
+    eprintln!("[Transify-Rust] Cancelling capture");
+    for tool in &["gnome-screenshot", "scrot", "import"] {
+        let _ = Command::new("killall").arg(tool).status();
+    }
+    Ok(())
+}

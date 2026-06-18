@@ -1,6 +1,7 @@
 import { TranslatorPanel } from "@/widgets/translator-panel/TranslatorPanel";
 import { HistoryPanel } from "@/widgets/history-panel/HistoryPanel";
 import { SettingsPanel } from "@/widgets/settings-panel/SettingsPanel";
+import { CaptureOverlay } from "@/features/screenshot-translation/components/CaptureOverlay";
 import { useKeyboardShortcuts } from "@/features/translator/hooks/useKeyboardShortcuts";
 import { useGlobalShortcut } from "@/features/translator/hooks/useGlobalShortcut";
 import { useSyncShortcuts } from "@/features/translator/hooks/useSyncShortcuts";
@@ -85,6 +86,7 @@ export function App() {
       </div>
 
       <SettingsPanel />
+      <CaptureOverlay />
     </div>
   );
 }

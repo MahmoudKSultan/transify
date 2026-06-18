@@ -5,7 +5,7 @@ mod presentation;
 mod shared;
 
 use presentation::commands::{
-    capture_screen_region, create_app_state, event_received, register_shortcut,
+    cancel_capture, capture_screen_region, create_app_state, event_received, register_shortcut,
     test_shortcut_flow, translate,
 };
 use presentation::global_key_listener::start_global_key_listener;
@@ -29,6 +29,7 @@ pub fn run() {
             test_shortcut_flow,
             event_received,
             capture_screen_region,
+            cancel_capture,
         ])
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::Focused(focused) = event {

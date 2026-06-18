@@ -1,6 +1,6 @@
 pub mod screenshot;
 
-pub use screenshot::capture_screen_region;
+pub use screenshot::{cancel_capture, capture_screen_region};
 
 use crate::application::dto::{TranslateRequest, TranslateResponse};
 use crate::application::use_cases::TranslateUseCase;
