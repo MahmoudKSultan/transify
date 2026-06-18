@@ -1,3 +1,7 @@
+pub mod screenshot;
+
+pub use screenshot::capture_screen_region;
+
 use crate::application::dto::{TranslateRequest, TranslateResponse};
 use crate::application::use_cases::TranslateUseCase;
 use crate::infrastructure::translation::google::GoogleTranslateProvider;

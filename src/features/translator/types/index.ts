@@ -27,6 +27,7 @@ export interface ShortcutConfig {
   swap: string;
   clear: string;
   focusInput: string;
+  ocr: string;
 }
 
 export const DEFAULT_SHORTCUTS: ShortcutConfig = {
@@ -34,6 +35,7 @@ export const DEFAULT_SHORTCUTS: ShortcutConfig = {
   swap: "ctrl+s",
   clear: "ctrl+shift+c",
   focusInput: "ctrl+shift+f",
+  ocr: "ctrl+shift+o",
 };
 
 export interface TranslatorState {

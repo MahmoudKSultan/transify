@@ -3,7 +3,7 @@ import type { TranslatorState, TranslationItem, TranslationError, Theme, Contras
 import { DEFAULT_SHORTCUTS } from "../types";
 import { translateText, getTranslationErrorLabel } from "../services/translation";
 
-const SHORTCUT_VERSION = 2;
+const SHORTCUT_VERSION = 3;
 
 function loadShortcuts(): ShortcutConfig {
   try {

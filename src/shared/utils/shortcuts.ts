@@ -47,4 +47,5 @@ export const SHORTCUT_ACTIONS = [
   { key: "swap" as const, label: "Swap Languages", description: "Swap source & target" },
   { key: "clear" as const, label: "Clear Input", description: "Clear all text" },
   { key: "focusInput" as const, label: "Focus Input", description: "Jump to input field" },
+  { key: "ocr" as const, label: "Capture & Translate", description: "Screenshot OCR translation" },
 ] as const;

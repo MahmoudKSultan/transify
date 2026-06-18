@@ -114,9 +114,9 @@ check "ctrl+t default shortcut" \
     "grep \"ctrl+t\" src/features/translator/types/index.ts" \
     "ctrl+t"
 
-check "SHORTCUT_VERSION=2" \
+check "SHORTCUT_VERSION=3" \
     "grep \"SHORTCUT_VERSION\" src/features/translator/store/index.ts" \
-    "2"
+    "3"
 
 check "useSyncShortcuts registers on first run" \
     "grep \"register_shortcut\" src/features/translator/hooks/useSyncShortcuts.ts" \
@@ -191,6 +191,73 @@ check "index.html references vite.svg" \
 check "tauri.conf.json lists new icon.png" \
     "grep 'icon.png' src-tauri/tauri.conf.json" \
     "icon.png"
+
+echo ""
+echo "--- Screenshot Translation Feature ---"
+
+check "screenshot-translation types exist" \
+    "ls src/features/screenshot-translation/types/index.ts 2>&1" \
+    "index.ts"
+
+check "screenshot-translation store exists" \
+    "ls src/features/screenshot-translation/store/index.ts 2>&1" \
+    "index.ts"
+
+check "OCR service exists" \
+    "ls src/features/screenshot-translation/services/ocr.ts 2>&1" \
+    "ocr.ts"
+
+check "Capture service exists" \
+    "ls src/features/screenshot-translation/services/capture.ts 2>&1" \
+    "capture.ts"
+
+check "CaptureButton component exists" \
+    "ls src/features/screenshot-translation/components/CaptureButton.tsx 2>&1" \
+    "CaptureButton.tsx"
+
+check "useScreenshotTranslation hook exists" \
+    "ls src/features/screenshot-translation/hooks/useScreenshotTranslation.ts 2>&1" \
+    "useScreenshotTranslation.ts"
+
+check "capture_screen_region Rust command exists" \
+    "grep 'fn capture_screen_region' src-tauri/src/presentation/commands/screenshot.rs" \
+    "fn capture_screen_region"
+
+check "capture_screen_region registered in lib.rs" \
+    "grep 'capture_screen_region' src-tauri/src/lib.rs" \
+    "capture_screen_region"
+
+check "ocr shortcut key defined" \
+    "grep \"ocr.*ctrl+shift+o\" 2>/dev/null src/features/translator/types/index.ts || grep ocr src/features/translator/types/index.ts | head -1" \
+    "ocr"
+
+check "ocr shortcut action in SHORTCUT_ACTIONS" \
+    "grep \"key.*ocr\" src/shared/utils/shortcuts.ts" \
+    "ocr"
+
+check "SHORTCUT_VERSION incremented to 3" \
+    "grep \"SHORTCUT_VERSION = 3\" src/features/translator/store/index.ts" \
+    "3"
+
+check "OCR shortcut handler in useKeyboardShortcuts" \
+    "grep \"screenshot-translation/store\" src/features/translator/hooks/useKeyboardShortcuts.ts" \
+    "screenshot-translation/store"
+
+check "CaptureButton in ActionBar" \
+    "grep \"CaptureButton\" src/features/translator/components/ActionBar.tsx" \
+    "CaptureButton"
+
+check "tesseract.js dependency installed" \
+    "grep \"tesseract.js\" package.json" \
+    "tesseract.js"
+
+check "Rust screenshot command module registered" \
+    "grep \"pub mod screenshot\" src-tauri/src/presentation/commands/mod.rs" \
+    "screenshot"
+
+check "base64 crate in Cargo.toml" \
+    "grep \"base64\" src-tauri/Cargo.toml" \
+    "base64"
 
 echo ""
 echo "--- Summary ---"

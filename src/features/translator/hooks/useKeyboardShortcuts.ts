@@ -64,6 +64,17 @@ export function useKeyboardShortcuts() {
         return;
       }
 
+      // OCR capture
+      if (matchShortcut(shortcuts.ocr, e)) {
+        e.preventDefault();
+        import("@/features/screenshot-translation/store").then(
+          ({ useScreenshotStore }) => {
+            useScreenshotStore.getState().startCapture();
+          },
+        );
+        return;
+      }
+
       // Enter → Translate (when input is focused)
       if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey && !e.altKey) {
         const active = document.activeElement;

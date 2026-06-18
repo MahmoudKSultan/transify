@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/shared/ui/Button";
 import { useTranslatorStore } from "../store";
+import { CaptureButton } from "@/features/screenshot-translation/components/CaptureButton";
 import { Copy, ClipboardPaste, Eraser, Volume2, Check } from "lucide-react";
 
 export function ActionBar() {
@@ -63,6 +64,8 @@ export function ActionBar() {
         <Eraser className="h-3.5 w-3.5" />
         <span className="ml-1">Clear</span>
       </Button>
+
+      <CaptureButton />
 
       <Button
         variant="ghost"
