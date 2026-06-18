@@ -4,6 +4,9 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "core:window:allow-minimize",
+    "core:window:allow-unminimize",
+    "core:window:allow-set-focus",
     "clipboard-manager:allow-read-text",
     "clipboard-manager:allow-write-text",
     "global-shortcut:allow-register",
