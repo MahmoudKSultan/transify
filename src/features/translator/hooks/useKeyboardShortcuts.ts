@@ -3,7 +3,8 @@ import { useTranslatorStore } from "../store";
 import { parseShortcutEvent } from "@/shared/utils/shortcuts";
 import { useScreenshotStore } from "@/features/screenshot-translation/store";
 
-function matchShortcut(stored: string, e: KeyboardEvent): boolean {
+function matchShortcut(stored: string | undefined, e: KeyboardEvent): boolean {
+  if (!stored) return false;
   const parsed = parseShortcutEvent(e);
   return parsed === stored.toLowerCase();
 }
@@ -68,7 +69,6 @@ export function useKeyboardShortcuts() {
       // OCR capture
       if (matchShortcut(shortcuts.ocr, e)) {
         e.preventDefault();
-        console.log("[Transify] OCR shortcut triggered");
         useScreenshotStore.getState().startCapture();
         return;
       }
