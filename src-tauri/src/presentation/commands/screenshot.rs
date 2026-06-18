@@ -2,16 +2,12 @@ use base64::Engine;
 use std::io::Read;
 use std::process::Command;
 
-fn detect_tool() -> Option<&'static str> {
-    for tool in &["scrot", "gnome-screenshot", "import"] {
-        if Command::new("which").arg(tool).output().is_ok() {
-            let out = Command::new("which").arg(tool).output().ok()?;
-            if !out.stdout.is_empty() {
-                return Some(tool);
-            }
-        }
-    }
-    None
+fn tool_available(tool: &str) -> bool {
+    Command::new("which")
+        .arg(tool)
+        .output()
+        .map(|o| o.status.success())
+        .unwrap_or(false)
 }
 
 fn capture_with_tool(tool: &str, output_path: &str) -> Result<(), String> {
@@ -22,7 +18,7 @@ fn capture_with_tool(tool: &str, output_path: &str) -> Result<(), String> {
                 .status()
                 .map_err(|e| format!("Failed to run scrot: {}", e))?;
             if !status.success() {
-                return Err("scrot cancelled or failed.".into());
+                return Err("Capture cancelled or failed.".into());
             }
             Ok(())
         }
@@ -32,7 +28,7 @@ fn capture_with_tool(tool: &str, output_path: &str) -> Result<(), String> {
                 .status()
                 .map_err(|e| format!("Failed to run gnome-screenshot: {}", e))?;
             if !status.success() {
-                return Err("gnome-screenshot cancelled or failed.".into());
+                return Err("Capture cancelled or failed.".into());
             }
             Ok(())
         }
@@ -42,7 +38,7 @@ fn capture_with_tool(tool: &str, output_path: &str) -> Result<(), String> {
                 .status()
                 .map_err(|e| format!("Failed to run import: {}", e))?;
             if !status.success() {
-                return Err("import cancelled or failed.".into());
+                return Err("Capture cancelled or failed.".into());
             }
             Ok(())
         }
@@ -52,8 +48,10 @@ fn capture_with_tool(tool: &str, output_path: &str) -> Result<(), String> {
 
 #[tauri::command]
 pub fn capture_screen_region() -> Result<String, String> {
-    let tool = detect_tool().ok_or_else(|| {
-        "No screen capture tool found. Install scrot, gnome-screenshot, or ImageMagick.".to_string()
+    let tools = ["scrot", "gnome-screenshot", "import"];
+    let tool = tools.iter().find(|t| tool_available(t)).ok_or_else(|| {
+        eprintln!("[Transify-Rust] No capture tool found");
+        "No screen capture tool found. Install one: sudo apt install scrot".to_string()
     })?;
 
     eprintln!("[Transify-Rust] Capturing screen with: {}", tool);
@@ -71,5 +69,8 @@ pub fn capture_screen_region() -> Result<String, String> {
 
     let _ = std::fs::remove_file(&tmp_path);
 
-    Ok(base64::engine::general_purpose::STANDARD.encode(&buf))
+    let encoded = base64::engine::general_purpose::STANDARD.encode(&buf);
+    eprintln!("[Transify-Rust] Capture done: {} bytes encoded", encoded.len());
+
+    Ok(encoded)
 }

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useTranslatorStore } from "../store";
 import { parseShortcutEvent } from "@/shared/utils/shortcuts";
+import { useScreenshotStore } from "@/features/screenshot-translation/store";
 
 function matchShortcut(stored: string, e: KeyboardEvent): boolean {
   const parsed = parseShortcutEvent(e);
@@ -67,11 +68,8 @@ export function useKeyboardShortcuts() {
       // OCR capture
       if (matchShortcut(shortcuts.ocr, e)) {
         e.preventDefault();
-        import("@/features/screenshot-translation/store").then(
-          ({ useScreenshotStore }) => {
-            useScreenshotStore.getState().startCapture();
-          },
-        );
+        console.log("[Transify] OCR shortcut triggered");
+        useScreenshotStore.getState().startCapture();
         return;
       }
 

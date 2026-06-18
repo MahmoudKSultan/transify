@@ -1,12 +1,12 @@
 import { useScreenshotStore } from "../store";
 
 export function CaptureButton() {
-  const { startCapture, isCapturing } = useScreenshotStore();
+  const { startCapture, cancelCapture, isCapturing } = useScreenshotStore();
 
   return (
     <button
-      onClick={startCapture}
-      disabled={isCapturing}
+      onClick={isCapturing ? cancelCapture : startCapture}
+      disabled={false}
       aria-label="Capture screen and translate text"
       className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors
         bg-indigo-50 text-indigo-700 hover:bg-indigo-100
@@ -28,7 +28,7 @@ export function CaptureButton() {
         <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
         <circle cx="12" cy="13" r="3" />
       </svg>
-      {isCapturing ? "Capturing..." : "Capture & Translate"}
+      {isCapturing ? "Cancel" : "Capture & Translate"}
     </button>
   );
 }
