@@ -6,7 +6,6 @@ use std::time::Duration;
 use tauri::{AppHandle, Emitter, Manager};
 
 fn simulate_copy() -> bool {
-    // Simulate Ctrl+C to copy selected text to clipboard
     let pairs = [
         (EventType::KeyPress(Key::ControlLeft), EventType::KeyRelease(Key::ControlLeft)),
         (EventType::KeyPress(Key::KeyC), EventType::KeyRelease(Key::KeyC)),
@@ -26,7 +25,6 @@ fn simulate_copy() -> bool {
 }
 
 fn read_clipboard() -> Option<String> {
-    // Try arboard first
     match arboard::Clipboard::new() {
         Ok(mut cb) => match cb.get_text() {
             Ok(text) => {
@@ -40,7 +38,6 @@ fn read_clipboard() -> Option<String> {
         Err(_) => {}
     }
 
-    // Fallback: try xclip for PRIMARY selection
     if let Ok(output) = std::process::Command::new("xclip")
         .args(["-selection", "primary", "-o", "-silent"])
         .output()
@@ -56,13 +53,20 @@ fn read_clipboard() -> Option<String> {
     None
 }
 
+fn focus_window(app: &AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.set_focus();
+        let _ = window.unminimize();
+    }
+}
+
 pub fn start_global_key_listener(app: AppHandle, enabled: Arc<AtomicBool>) {
     thread::spawn(move || {
         let mut ctrl_pressed = false;
         let mut shift_pressed = false;
         let mut alt_pressed = false;
 
-        eprintln!("[Transify-Rust] Global key listener started (Ctrl+T to translate)");
+        eprintln!("[Transify-Rust] Global key listener started (default shortcuts active)");
 
         let callback = move |event: Event| {
             if !enabled.load(Ordering::Relaxed) {
@@ -90,34 +94,50 @@ pub fn start_global_key_listener(app: AppHandle, enabled: Arc<AtomicBool>) {
                 EventType::KeyRelease(Key::Alt) => {
                     alt_pressed = false;
                 }
-                EventType::KeyPress(Key::KeyT) => {
-                    if ctrl_pressed && !shift_pressed && !alt_pressed {
-                        eprintln!("[Transify-Rust] Ctrl+T detected!");
-                        ctrl_pressed = false; // Debounce
+                EventType::KeyPress(Key::KeyT) if ctrl_pressed && !shift_pressed && !alt_pressed => {
+                    eprintln!("[Transify-Rust] Ctrl+T detected (translate)");
+                    ctrl_pressed = false;
 
-                        // Step 1: Simulate Ctrl+C to copy selected text
-                        let sim_ok = simulate_copy();
-                        if sim_ok {
-                            thread::sleep(Duration::from_millis(100));
-                        }
-
-                        // Step 2: Read clipboard
-                        if let Some(text) = read_clipboard() {
-                            eprintln!(
-                                "[Transify-Rust] Clipboard: \"{:.50}\"",
-                                text
-                            );
-                        } else {
-                            eprintln!("[Transify-Rust] No text found in clipboard");
-                        }
-
-                        // Step 3: Focus window and emit event
-                        if let Some(window) = app.get_webview_window("main") {
-                            let _ = window.set_focus();
-                            let _ = window.unminimize();
-                        }
-                        let _ = app.emit("global-shortcut-translate", ());
+                    let sim_ok = simulate_copy();
+                    if sim_ok {
+                        thread::sleep(Duration::from_millis(100));
                     }
+
+                    if let Some(text) = read_clipboard() {
+                        eprintln!("[Transify-Rust] Clipboard: \"{:.50}\"", text);
+                    } else {
+                        eprintln!("[Transify-Rust] No text found in clipboard");
+                    }
+
+                    focus_window(&app);
+                    let _ = app.emit("global-shortcut-translate", ());
+                }
+                EventType::KeyPress(Key::KeyS) if ctrl_pressed && !shift_pressed && !alt_pressed => {
+                    eprintln!("[Transify-Rust] Ctrl+S detected (swap)");
+                    ctrl_pressed = false;
+                    focus_window(&app);
+                    let _ = app.emit("global-shortcut-swap", ());
+                }
+                EventType::KeyPress(Key::KeyC) if ctrl_pressed && shift_pressed && !alt_pressed => {
+                    eprintln!("[Transify-Rust] Ctrl+Shift+C detected (clear)");
+                    ctrl_pressed = false;
+                    shift_pressed = false;
+                    focus_window(&app);
+                    let _ = app.emit("global-shortcut-clear", ());
+                }
+                EventType::KeyPress(Key::KeyF) if ctrl_pressed && shift_pressed && !alt_pressed => {
+                    eprintln!("[Transify-Rust] Ctrl+Shift+F detected (focus input)");
+                    ctrl_pressed = false;
+                    shift_pressed = false;
+                    focus_window(&app);
+                    let _ = app.emit("global-shortcut-focus", ());
+                }
+                EventType::KeyPress(Key::KeyO) if ctrl_pressed && shift_pressed && !alt_pressed => {
+                    eprintln!("[Transify-Rust] Ctrl+Shift+O detected (OCR)");
+                    ctrl_pressed = false;
+                    shift_pressed = false;
+                    // Don't focus window — startCapture() hides it anyway
+                    let _ = app.emit("global-shortcut-ocr", ());
                 }
                 _ => {}
             }
@@ -126,7 +146,6 @@ pub fn start_global_key_listener(app: AppHandle, enabled: Arc<AtomicBool>) {
         if let Err(e) = listen(callback) {
             eprintln!("[Transify-Rust] Global key listener error: {:?}", e);
             eprintln!("[Transify-Rust] Try: sudo usermod -a -G input $USER && reboot");
-            eprintln!("[Transify-Rust] Or press Ctrl+T when Transify window is focused (in-app shortcut)");
         }
     });
 }

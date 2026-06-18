@@ -1,70 +1,72 @@
 import { useEffect } from "react";
 import { useTranslatorStore } from "../store";
+import { useScreenshotStore } from "@/features/screenshot-translation/store";
 
 async function readClipboard(): Promise<string | null> {
   try {
     const { readText } = await import("@tauri-apps/plugin-clipboard-manager");
-    const text = await readText();
-    console.log("[Transify] Clipboard (Tauri plugin):", text?.substring(0, 50));
-    return text;
-  } catch (e) {
-    console.warn("[Transify] Tauri clipboard failed:", e);
-  }
-
-  try {
-    const text = await navigator.clipboard.readText();
-    console.log("[Transify] Clipboard (browser):", text?.substring(0, 50));
-    return text;
-  } catch (e) {
-    console.warn("[Transify] Browser clipboard failed:", e);
-    return null;
+    return await readText();
+  } catch {
+    try {
+      return await navigator.clipboard.readText();
+    } catch {
+      return null;
+    }
   }
 }
 
-async function confirmEventReceived() {
-  try {
-    const { invoke } = await import("@tauri-apps/api/core");
-    await invoke("event_received", { eventName: "global-shortcut-translate" });
-  } catch {}
-}
+type EventHandler = () => void;
 
 export function useGlobalShortcut() {
   useEffect(() => {
-    let unlistenFn: (() => void) | undefined;
+    const unlisteners: (() => void)[] = [];
 
     const setup = async () => {
       try {
         const { listen } = await import("@tauri-apps/api/event");
-        console.log("[Transify] Listening for global-shortcut-translate event...");
 
-        unlistenFn = await listen("global-shortcut-translate", async () => {
-          console.log("[Transify] Global shortcut event received!");
-          // Confirm back to Rust
-          confirmEventReceived();
+        const handlers: Record<string, EventHandler> = {
+          "global-shortcut-translate": async () => {
+            const store = useTranslatorStore.getState();
+            const text = await readClipboard();
+            if (text && text.trim()) {
+              store.setInputText(text);
+              setTimeout(() => useTranslatorStore.getState().translate(), 150);
+            }
+          },
+          "global-shortcut-swap": () => {
+            useTranslatorStore.getState().swapAndTranslate();
+          },
+          "global-shortcut-clear": () => {
+            useTranslatorStore.getState().clearInput();
+          },
+          "global-shortcut-focus": () => {
+            const input = document.getElementById("input-text") as HTMLTextAreaElement | null;
+            input?.focus();
+          },
+          "global-shortcut-ocr": () => {
+            useScreenshotStore.getState().startCapture();
+          },
+        };
 
-          const store = useTranslatorStore.getState();
-          const text = await readClipboard();
-          if (text && text.trim()) {
-            console.log("[Transify] Setting input text and translating...");
-            store.setInputText(text);
-            setTimeout(() => {
-              useTranslatorStore.getState().translate();
-            }, 150);
-          } else {
-            console.warn("[Transify] Clipboard is empty or whitespace");
-          }
-        });
+        for (const [event, handler] of Object.entries(handlers)) {
+          const unlisten = await listen(event, () => {
+            console.log(`[Transify] Global event: ${event}`);
+            handler();
+          });
+          unlisteners.push(unlisten);
+        }
 
-        console.log("[Transify] Event listener registered successfully");
+        console.log(`[Transify] Listening for ${Object.keys(handlers).length} global shortcut events`);
       } catch (e) {
-        console.error("[Transify] Failed to set up global shortcut listener:", e);
+        console.error("[Transify] Failed to set up global shortcut listeners:", e);
       }
     };
 
     setup();
 
     return () => {
-      unlistenFn?.();
+      unlisteners.forEach((fn) => fn());
     };
   }, []);
 }

@@ -5,8 +5,7 @@ mod presentation;
 mod shared;
 
 use presentation::commands::{
-    cancel_capture, capture_screen_region, create_app_state, event_received, register_shortcut,
-    test_shortcut_flow, translate,
+    cancel_capture, capture_screen_region, create_app_state, register_shortcut, translate,
 };
 use presentation::global_key_listener::start_global_key_listener;
 use std::sync::atomic::AtomicBool;
@@ -26,8 +25,6 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             translate,
             register_shortcut,
-            test_shortcut_flow,
-            event_received,
             capture_screen_region,
             cancel_capture,
         ])

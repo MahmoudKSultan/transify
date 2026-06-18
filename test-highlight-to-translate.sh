@@ -122,17 +122,49 @@ check "useSyncShortcuts registers on first run" \
     "grep \"register_shortcut\" src/features/translator/hooks/useSyncShortcuts.ts" \
     "register_shortcut"
 
-check "test_shortcut_flow command" \
-    "grep 'fn test_shortcut_flow' src-tauri/src/presentation/commands/mod.rs" \
-    "fn test_shortcut_flow"
+check "no test_shortcut_flow command" \
+    "grep -c 'fn test_shortcut_flow' src-tauri/src/presentation/commands/mod.rs 2>/dev/null || echo 0" \
+    "0"
 
-check "event_received command" \
-    "grep 'fn event_received' src-tauri/src/presentation/commands/mod.rs" \
-    "fn event_received"
+check "no event_received command" \
+    "grep -c 'fn event_received' src-tauri/src/presentation/commands/mod.rs 2>/dev/null || echo 0" \
+    "0"
 
-check "test button in App.tsx" \
-    "grep \"test_shortcut_flow\" src/app/App.tsx" \
-    "test_shortcut_flow"
+check "no debug button in App.tsx" \
+    "grep -c 'test_shortcut_flow' src/app/App.tsx 2>/dev/null || echo 0" \
+    "0"
+
+check "rdev handles Ctrl+S (swap)" \
+    "grep \"KeyS\" src-tauri/src/presentation/global_key_listener.rs" \
+    "KeyS"
+
+check "rdev handles Ctrl+Shift+O (OCR)" \
+    "grep \"KeyO.*ctrl_pressed.*shift_pressed\" src-tauri/src/presentation/global_key_listener.rs" \
+    "KeyO"
+
+check "rdev handles Ctrl+Shift+C (clear)" \
+    "grep \"KeyC.*ctrl_pressed.*shift_pressed\" src-tauri/src/presentation/global_key_listener.rs" \
+    "KeyC"
+
+check "rdev handles Ctrl+Shift+F (focus)" \
+    "grep \"KeyF.*ctrl_pressed.*shift_pressed\" src-tauri/src/presentation/global_key_listener.rs" \
+    "KeyF"
+
+check "global-shortcut-swap event in frontend" \
+    "grep \"global-shortcut-swap\" src/features/translator/hooks/useGlobalShortcut.ts" \
+    "global-shortcut-swap"
+
+check "global-shortcut-ocr event in frontend" \
+    "grep \"global-shortcut-ocr\" src/features/translator/hooks/useGlobalShortcut.ts" \
+    "global-shortcut-ocr"
+
+check "global-shortcut-clear event in frontend" \
+    "grep \"global-shortcut-clear\" src/features/translator/hooks/useGlobalShortcut.ts" \
+    "global-shortcut-clear"
+
+check "global-shortcut-focus event in frontend" \
+    "grep \"global-shortcut-focus\" src/features/translator/hooks/useGlobalShortcut.ts" \
+    "global-shortcut-focus"
 
 echo ""
 echo "--- Build Artifacts ---"
@@ -142,11 +174,11 @@ check "production binary exists" \
     "transify"
 
 check "deb bundle exists" \
-    "ls src-tauri/target/release/bundle/deb/Transify_0.1.0_amd64.deb 2>&1" \
+    "ls src-tauri/target/release/bundle/deb/Transify_0.2.0_amd64.deb 2>&1" \
     ".deb"
 
 check "AppImage bundle exists" \
-    "ls src-tauri/target/release/bundle/appimage/Transify_0.1.0_amd64.AppImage 2>&1" \
+    "ls src-tauri/target/release/bundle/appimage/Transify_0.2.0_amd64.AppImage 2>&1" \
     ".AppImage"
 
 echo ""

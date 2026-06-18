@@ -7,21 +7,10 @@ import { useGlobalShortcut } from "@/features/translator/hooks/useGlobalShortcut
 import { useSyncShortcuts } from "@/features/translator/hooks/useSyncShortcuts";
 import { useTheme } from "@/features/translator/hooks/useTheme";
 import { Button } from "@/shared/ui/Button";
-import { Settings, History, Bug } from "lucide-react";
+import { Settings, History } from "lucide-react";
 import { useTranslatorStore } from "@/features/translator/store";
 import { useState } from "react";
 import { cn } from "@/shared/utils/cn";
-
-async function triggerTestShortcut() {
-  try {
-    const { invoke } = await import("@tauri-apps/api/core");
-    console.log("[Transify] Calling test_shortcut_flow...");
-    await invoke("test_shortcut_flow");
-    console.log("[Transify] test_shortcut_flow completed");
-  } catch (e) {
-    console.error("[Transify] test_shortcut_flow failed:", e);
-  }
-}
 
 export function App() {
   useKeyboardShortcuts();
@@ -57,15 +46,6 @@ export function App() {
             className="h-7 w-7"
           >
             <Settings className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="icon"
-            onClick={triggerTestShortcut}
-            aria-label="Test shortcut"
-            title="Test shortcut (emit event)"
-            className="h-7 w-7 text-yellow-500 hover:text-yellow-400"
-          >
-            <Bug className="h-4 w-4" />
           </Button>
         </div>
       </header>

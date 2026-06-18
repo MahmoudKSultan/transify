@@ -132,28 +132,6 @@ pub fn register_shortcut(app: AppHandle, shortcut_str: String) -> Result<(), Str
     Ok(())
 }
 
-#[tauri::command]
-pub fn test_shortcut_flow(app: AppHandle) -> Result<(), String> {
-    eprintln!("[Transify-Rust] test_shortcut_flow called!");
-    if let Some(window) = app.get_webview_window("main") {
-        let _ = window.set_focus();
-        let _ = window.unminimize();
-        eprintln!("[Transify-Rust] Window focused");
-    } else {
-        eprintln!("[Transify-Rust] WARNING: no 'main' window");
-    }
-    eprintln!("[Transify-Rust] Emitting event...");
-    let _ = app.emit("global-shortcut-translate", ());
-    eprintln!("[Transify-Rust] Event emitted");
-    Ok(())
-}
-
-#[tauri::command]
-pub fn event_received(event_name: String) -> Result<(), String> {
-    eprintln!("[Transify-Rust] ✓ FRONTEND CONFIRMED event received: {}", event_name);
-    Ok(())
-}
-
 pub fn create_app_state() -> AppState {
     let provider = Box::new(GoogleTranslateProvider);
     let translate_use_case = TranslateUseCase::new(provider);
